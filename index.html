@@ -1,23 +1,251 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MonPedia - ပၞဴ</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MonPedia - Mon Wiki</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, sans-serif;
+}
+
+body{
+    background:#f4f6f8;
+}
+
+header{
+    background:#00695c;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+header h1{
+    margin-bottom:10px;
+}
+
+.search-box{
+    max-width:600px;
+    margin:20px auto;
+    display:flex;
+    gap:10px;
+}
+
+.search-box input{
+    flex:1;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+}
+
+.search-box button{
+    padding:12px 20px;
+    border:none;
+    background:#004d40;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.card img{
+    width:100%;
+    max-height:300px;
+    object-fit:cover;
+    border-radius:10px;
+    margin-bottom:15px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+table td{
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+footer{
+    background:#00695c;
+    color:white;
+    text-align:center;
+    padding:15px;
+    margin-top:30px;
+}
+
+.hidden{
+    display:none;
+}
+</style>
 </head>
-<body style="margin: 0; padding: 20px; background-color: #f5f5f5; font-family: sans-serif;">
+<body>
 
-    <div style="max-width: 400px; margin: 20px auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); text-align: center; background-color: #ffffff;">
-        
-        <img src="https://images.unsplash.com/photo-1590502593747-42a996133562?w=500" alt="Lemon" style="width: 100%; height: auto; border-radius: 8px; object-fit: cover;">
-        
-        <div style="margin-top: 15px;">
-            <h2 style="color: #2e7d32; margin: 5px 0; font-size: 28px;">ပၞဴ</h2>
-            <p style="color: #424242; margin: 5px 0; font-size: 18px; font-weight: bold;">သံပရာသီး</p>
-            <p style="color: #757575; margin: 5px 0; font-size: 16px; font-style: italic;">Lemon</p>
-        </div>
+<header>
+    <h1>MonPedia</h1>
+    <p>Mon • Myanmar • English Knowledge Base</p>
+</header>
 
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search Mon, Myanmar or English...">
+    <button onclick="searchData()">Search</button>
+</div>
+
+<div class="container">
+
+    <div id="result"></div>
+
+    <div class="card">
+        <h2>Featured Categories</h2>
+        <ul style="margin-top:10px;">
+            <li>📚 Mon Language</li>
+            <li>🌿 Plants & Vegetables</li>
+            <li>👑 Historical Figures</li>
+            <li>🏛 Mon Culture</li>
+        </ul>
     </div>
 
-</body>
+</div>
+
+<footer>
+    © 2026 MonPedia Wiki
+</footer>
+
+<script>
+
+const database = [
+
+{
+category:"Vegetable",
+mon:"သတ်ကြုက်",
+myanmar:"ကန်စွန်းရွက်",
+english:"Water Spinach",
+image:"https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=1200",
+description:"ရေတွင်စိုက်ပျိုးလေ့ရှိသော ဟင်းသီးဟင်းရွက်တစ်မျိုး။"
+},
+
+{
+category:"Vegetable",
+mon:"သတ်သၞေဟ်ဟစး",
+myanmar:"ခရမ်းချဉ်သီး",
+english:"Tomato",
+image:"https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=1200",
+description:"အစားအသောက်များတွင် အသုံးများသော အသီးတစ်မျိုး။"
+},
+
+{
+category:"Historical Figure",
+mon:"မိစဴဗု"
+myanmar:"ရှင်စောပု",
+english:"Queen Shin Sawbu",
+image:"https://upload.wikimedia.org/wikipedia/commons/5/5a/Shin_Sawbu.jpg",
+description:"ဟံသာဝတီနိုင်ငံ၏ ထင်ရှားသော ဘုရင်မ။"
+}
+
+];
+
+function searchData(){
+
+let keyword = document.getElementById("searchInput").value.toLowerCase();
+
+let resultDiv = document.getElementById("result");
+
+let results = database.filter(item =>
+item.mon.toLowerCase().includes(keyword) ||
+item.myanmar.toLowerCase().includes(keyword) ||
+item.english.toLowerCase().includes(keyword)
+);
+
+if(results.length===0){
+resultDiv.innerHTML=
+`<div class="card">
+<h2>No Result Found</h2>
+</div>`;
+return;
+}
+
+let html='';
+
+results.forEach(item=>{
+
+html += `
+<div class="card">
+<img src="${item.image}" alt="${item.english}">
+<h2>${item.myanmar}</h2>
+
+<table>
+<tr>
+<td><strong>Category</strong></td>
+<td>${item.category}</td>
+</tr>
+
+<tr>
+<td><strong>Mon</strong></td>
+<td>${item.mon}</td>
+</tr>
+
+<tr>
+<td><strong>Myanmar</strong></td>
+<td>${item.myanmar}</td>
+</tr>
+
+<tr>
+<td><strong>English</strong></td>
+<td>${item.english}</td>
+</tr>
+</table>
+
+<p style="margin-top:15px;">
+${item.description}
+</p>
+</div>
+`;
+});
+
+resultDiv.innerHTML = html;
+}
+
+</script>
+
+</body><div style="font-family: sans-serif; max-width: 400px; margin: 20px auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); text-align: center; background-color: #ffffff;">
+    
+    <img src="https://images.unsplash.com/photo-1590502593747-42a996133562?w=500" alt="Lemon" style="width: 100%; height: auto; border-radius: 8px; object-fit: cover;">
+    
+    <div style="margin-top: 15px;">
+        <h2 style="color: #2e7d32; margin: 5px 0; font-size: 28px;">ပၞဴ</h2>
+        <p style="color: #424242; margin: 5px 0; font-size: 18px; font-weight: bold;">သံပရာသီး</p>
+        <p style="color: #757575; margin: 5px 0; font-size: 16px; font-style: italic;">Lemon</p>
+    </div>
+
+</div><div style="font-family: sans-serif; max-width: 400px; margin: 20px auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); text-align: center; background-color: #ffffff;">
+    
+    <img src="https://images.unsplash.com/photo-1590502593747-42a996133562?w=500" alt="Lemon" style="width: 100%; height: auto; border-radius: 8px; object-fit: cover;">
+    
+    <div style="margin-top: 15px;">
+        <h2 style="color: #2e7d32; margin: 5px 0; font-size: 28px;">ပၞဴ</h2>
+        <p style="color: #424242; margin: 5px 0; font-size: 18px; font-weight: bold;">သံပရာသီး</p>
+        <p style="color: #757575; margin: 5px 0; font-size: 16px; font-style: italic;">Lemon</p>
+    </div>
+
+</div>
+
+
 </html>
